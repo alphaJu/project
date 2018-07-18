@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ko">
+	<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>CS496</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<link rel="stylesheet" href="main.css" />
+	<link href="http://fonts.googleapis.com/css?family=Varela" rel="stylesheet" />
+	<link href="main.css" rel="stylesheet" type="text/css" media="all" />
+	<link href="font-awesome.min.css" rel="stylesheet" type="text/css" media="all" />
+	<style>
+		input.alt{
+			position:relative;
+			top : 10px;
+		}
+		button.alt{
+			position:relative;
+			top : 10px;
+		}
+		.game{
+			position:relative;
+			top:10px;
+			margin: 0;
+			background: #FFF;
+			color: #e74c3c;
+		}
+		#game{
+			border-radius:50%;
+		}
+		.select{
+			position:relative;
+			margin: 10px;
+			background: url(images/check.png);
+			background-size: 100px 100px;
+			border:none;
+			height:100px;
+			width:100px;
+		}
+		.save{
+			border:none;
+			position:relative;
+			margin: 10px;
+			background: url(images/save.png);
+			background-size: 100px 100px;
+			height:100px;
+			width:100px;
+			border-radius:0;
+		}
+		#OverlayIframe {
+          position: fixed; /* Sit on top of the page content */
+          display: none; /* Hidden by default */
+          width: 100%; /* Full width (cover the whole page) */
+          height: 100%; /* Full height (cover the whole page) */
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+          top: 50;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: rgba(255,255,255,1); /* Black background with opacity */
+          z-index: 30000; /* Specify a stack order in case you're using a different order for other elements */
+          cursor: pointer; /* Add a pointer on hover */
+    	}
+	</style>
+</head>
+<body>
+	<!-- Scripts -->
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script type="text/javascript" src="js/bootstrap.js"></script>
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+	<script src="js/jquery.min.js"></script>
+	<script src="js/skel.min.js"></script>
+	<script src="js/util.js"></script>
+	<script src="js/main.js"></script>
+	<script src="js/FileSaver.js"></script>
+	<script>
+		function captureReturnKey(e) {
+			if(e.keyCode==13)
+			return false;
+		}
+	</script>
+	<script>
+		function on(elem){
+			if (select_flag)
+				return;
+			var f = document.getElementById('OverlayIframe');
+			f.imageSrc = elem.src;
+			f.idx = urls.indexOf(elem.src);
+			f.src = "http://115.68.231.165/~db367/project/detail.html";
+			f.style.display = "block";
+		}
+		function on_by_idx(idx) {
+		  var f = document.getElementById("OverlayIframe");
+		  f.imageSrc = urls[idx];
+		  f.idx = idx;
+		  f.src = "detail.html";
+		  f.style.display = "block";
+		}
+		function off(){
+			document.getElementById('OverlayIframe').style.display = "none";
+		}
+	</script>
+	<!-- Header -->
+			<header id="header">
+				<div class="inner">
+					<div id = "red" class="content">
+						<h1>IMAGE496</h1>
+						<h2>What do you want?</h2>
+						<form action="game.php" method="post" onkeydown="return captureReturnKey(event)">
+							<input type="text" name="keyword" id="input" placeholder="SEARCH">
+							<button type="button" class="button alt">SEARCH</button>
+							<input type="submit" id ="game" class="game" value="FLIPPED">
+						</form> 
+					</div>
+					<a href="#" class="button hidden"><span>Let's Go</span></a>
+				</div>
+			</header>
+			<!-- Detail Iframe -->
+			<iframe id="OverlayIframe"></iframe>
+			<!-- Main -->
+			<div id="main">
+				<button type="button" class="select"></button>
+				<button type="button" class="save" style="float: right"></button>
+				<div class="inner">
+					<div class="columns">
+							<div class="images">
+								<!-- Column 1 (horizontal, vertical, horizontal, vertical) -->
+								<div class="image fit">
+									<img src="images/pict01.jpg" alt="" onclick="on(this)"/>
+								</div>
+								<div class="image fit">
+									<img src="images/pict02.jpg" alt="" onclick="on(this)"/>
+								</div>
+								<div class="image fit">
+									<img src="images/pict03.jpg" alt="" onclick="on(this)"/>
+								</div>
+								<div class="image fit">
+									<img src="images/pict04.jpg" alt="" onclick="on(this)"/>
+								</div>
+
+							<!-- Column 2 (vertical, horizontal, vertical, horizontal) -->
+								<div class="image fit">
+									<img src="images/pict06.jpg" alt="" onclick="on(this)"/>
+								</div>
+								<div class="image fit">
+									<img src="images/pict05.jpg" alt="" onclick="on(this)"/>
+								</div>
+								<div class="image fit">
+									<img src="images/pict08.jpg" alt="" onclick="on(this)"/>
+								</div>
+								<div class="image fit">
+									<img src="images/pict07.jpg" alt="" onclick="on(this)"/>
+								</div>
+
+						<!-- Column 3 (horizontal, vertical, horizontal, vertical) -->
+								<div class="image fit">
+									<img src="images/pict09.jpg" alt="" onclick="on(this)"/>
+								</div>
+								<div class="image fit">
+									<img src="images/pict12.jpg" alt="" onclick="on(this)"/>
+								</div>
+								<div class="image fit">
+									<img src="images/pict11.jpg" alt="" onclick="on(this)"/>
+								</div>
+								<div class="image fit">
+									<img src="images/pict10.jpg" alt="" onclick="on(this)"/>
+								</div>
+
+						<!-- Column 4 (vertical, horizontal, vertical, horizontal) -->
+								<div class="image fit">
+									<img src="images/pict13.jpg" alt="" onclick="on(this)"/>
+								</div>
+								<div class="image fit">
+									<img src="images/pict14.jpg" alt="" onclick="on(this)"/>
+								</div>
+								<div class="image fit">
+									<img src="images/pict15.jpg" alt="" onclick="on(this)"/>
+								</div>
+								<div class="image fit">
+									<img src="images/pict16.jpg" alt="" onclick="on(this)"/>
+								</div>
+							</div>
+					</div>
+				</div>
+			</div>
+
+		<!-- Footer -->
+			<footer id="footer">
+				<a href="#" class="info fa fa-info-circle"><span>About</span></a>
+				<div class="inner">
+					<div class="content">
+						<h3>Vestibulum hendrerit tortor id gravida</h3>
+						<p>In tempor porttitor nisl non elementum. Nulla ipsum ipsum, feugiat vitae vehicula vitae, imperdiet sed risus. Fusce sed dictum neque, id auctor felis. Praesent luctus sagittis viverra. Nulla erat nibh, fermentum quis enim ac, ultrices euismod augue. Proin ligula nibh, pretium at enim eget, tempor feugiat nulla.</p>
+					</div>
+					<div class="copyright">
+						<h3>Follow me</h3>
+						<ul class="icons">
+							<li><a href="#" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
+							<li><a href="#" class="icon fa-facebook"><span class="label">Facebook</span></a></li>
+							<li><a href="#" class="icon fa-instagram"><span class="label">Instagram</span></a></li>
+							<li><a href="#" class="icon fa-dribbble"><span class="label">Dribbble</span></a></li>
+						</ul>
+						&copy; Untitled. Design: <a href="https://templated.co">TEMPLATED</a>. Images: <a href="https://unsplash.com/">Unsplash</a>.
+					</div>
+				</div>
+			</footer>
+
+</body>
+
+</html>

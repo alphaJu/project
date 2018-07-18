@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<!--
+   Radius by TEMPLATED
+   templated.co @templatedco
+   Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+  <head>
+    <title>Detail info</title>
+    <meta charset="utf-8" />
+    <style>
+      html,body {
+      	height: 100%;
+      }
+      div.horiz {
+        text-align: center;
+      }
+      center.container {
+      	height: 100%;
+        min-height: 100%;
+      	display: flex;
+      	flex-direction: column;
+      }
+
+      .rotimage{
+          transform-origin:50% 50%;
+          animation:4s rotateRight infinite 1s;
+      }
+      
+      #home {
+			border:none;
+			margin: 25px;
+			height:100px;
+			width:100px;
+			background: url(images/homeicon.png);
+			background-size: 100px 100px;
+			font-size: 1em;
+			font-family: 'Pattaya', sans-serif;
+			margin: 0 0 .25em 0;
+			color: #fff;
+		}
+
+      @keyframes rotateRight{
+          0%{}
+          10%{ transform:rotate(10deg); }
+          25%{ transform:rotate(-10deg);}
+          100%{}
+      }
+    </style>
+  </head>
+  <body>
+  	  <script>
+		function navigate(e) {
+			var kc = e.keyCode;
+			switch (kc) {
+			  case 37:
+			    // left key
+			    if (window.frameElement.idx > 0){
+			      top.off();
+			      top.on_by_idx(window.frameElement.idx - 1);
+			    }
+			    return;
+			  case 39:
+			    // right key
+			    if (window.frameElement.idx < top.urls.length - 1){
+			      top.off();
+			      top.on_by_idx(window.frameElement.idx + 1);
+			    }
+			    return;
+			  default:
+			    console.log(kc);
+			    return;
+			}
+		}
+    	window.addEventListener("keydown", navigate, false);
+      </script>
+    <center id="preview" class="container">
+      <div class="box" style="background-color: rgba(0,0,0,0.5); height: 300px; width: 100%; margin-bottom:40px">
+		<center><input type="submit" id="home" onclick="top.off()" value=""></center>
+      </div>
+      <!-- style="position:relative; top:50%; left:50%; width:800px; margin-top: 200px; margin-left: -64px;" -->
+      <div id="slider" class="box box-2" style="position:relative;">
+        <form>
+          <input type="range" id="scale" value="4" min="3" max="6" step="1" list="level">
+          <datalist id="level">
+            <option value="3">
+            <option value="4">
+            <option value="5">
+            <option value="6">
+          </datalist>
+        </form>
+        <br>
+      </div>
+      <div id="main" class="box" width="560px" style="background-color: white; flex: 1">
+        <!--<canvas id="puzzle" width="480px" height="480px" style="border:10px solid brown; position:absolute; top:50%; left:50%; margin-left: -250px; margin-top:120px"></canvas>-->
+        <div class="horiz">
+          <!--<span style="vertical-align:middle; margin-right:300px"> asdf </span>-->
+          <img class="rotimage" id="rot1" width="360px" height="360px" style="vertical-align:middle; margin-right:200px">
+          <canvas id="puzzle" width="480px" height="480px" style="border:10px solid brown; vertical-align:middle;"></canvas>
+          <img class="rotimage" id="rot2" width="360px" height="360px" style="vertical-align:middle; margin-left:200px">
+          <!--<span style="vertical-align:middle; margin-left:300px"> qwer </span>-->
+        </div>
+      </div>
+      <div style="margin-top:20px;">
+        <span>Total count</span>
+        <span id="count" style="margin-left:340px">0</span>
+        <img src="images/revertArrow.png" id="revert" width="30" height="30" style="background: #ffffff;"/>
+      </div>
+      <div class="box" style="background-color: rgba(0,0,0,0.5); height: 300px; width: 100%; margin-top:40px"></div>
+    </center>
+
+      <!-- Footer -->
+
+
+  </body>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <script>
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+  </script>
+  <script>
+    var cv = document.getElementById("puzzle");
+    var context = cv.getContext("2d");
+    var boardSize = document.getElementById("puzzle").width;
+    var tileCount = document.getElementById('scale').value;
+    var tileSize = boardSize / tileCount;
+
+    var image = new Image();
+
+    var boardParts = new Object;
+    var solved = false;
+    var count = document.getElementById("count");
+
+    var clickLoc = new Object;
+    clickLoc.x = 0;
+    clickLoc.y = 0;
+
+    var emptyLoc = new Object;
+    emptyLoc.x = 0;
+    emptyLoc.y = 0;
+
+    var emptyLocMem = new Array();
+
+
+    document.getElementById('scale').onchange = async function() {
+      tileCount = this.value;
+      tileSize = boardSize / tileCount;
+      count.textContent = 0;
+      emptyLocMem = new Array();
+      context.drawImage(image, 0, 0, cv.width, cv.height);
+      switch(tileCount) {
+        case "3":
+          swal("Easy one!", "Go ahead~", "info");
+          break;
+        case "4":
+          swal("Normal mode", "You can clear it!", "info");
+          break;
+        case "5":
+          swal("STAY...", "STAAAAYYYY", "info");
+          break;
+        case "6":
+          swal("Only for AI", "Human should go back", "error");
+          break;
+      }
+      await sleep(2500);
+      setBoard();
+      drawTiles();
+    };
+
+    document.getElementById('puzzle').onmousemove = function(e) {
+      clickLoc.x = Math.floor((e.pageX - this.offsetLeft) / tileSize);
+      clickLoc.y = Math.floor((e.pageY - this.offsetTop) / tileSize);
+    };
+
+    document.getElementById('puzzle').onclick = function() {
+      if (distance(clickLoc.x, clickLoc.y, emptyLoc.x, emptyLoc.y) == 1) {
+        count.textContent = parseInt(count.textContent) + 1;
+        if (!solved) {
+          // save record for revert button.
+          let mem = new Object;
+          mem.x = emptyLoc.x;
+          mem.y = emptyLoc.y;
+          emptyLocMem.push(mem);
+        }
+        slideTile(emptyLoc, clickLoc);
+        drawTiles();
+      }
+      if (solved) {
+        setTimeout(()=>swal("You solved it!", "Record : "+ count.textContent, "success"), 500);
+      }
+    };
+
+    document.getElementById("revert").onclick = function() {
+      if (emptyLocMem.length <= 0){
+        return;
+      }
+      let mem = emptyLocMem.pop();
+      if (distance(mem.x, mem.y, emptyLoc.x, emptyLoc.y) == 1) {
+        count.textContent = parseInt(count.textContent) - 1;
+        slideTile(emptyLoc, mem);
+        drawTiles();
+      }
+    }
+
+    function distance(x1, y1, x2, y2) {
+      return Math.abs(x1 - x2) + Math.abs(y1 - y2);
+    }
+
+    function setBoard() {
+      boardParts = new Array(tileCount);
+      for (var i = 0; i < tileCount; ++i) {
+        boardParts[i] = new Array(tileCount);
+        for (var j = 0; j < tileCount; ++j) {
+          boardParts[i][j] = new Object;
+          boardParts[i][j].x = (tileCount - 1) - i;
+          boardParts[i][j].y = (tileCount - 1) - j;
+        }
+      }
+      emptyLoc.x = boardParts[tileCount - 1][tileCount - 1].x;
+      emptyLoc.y = boardParts[tileCount - 1][tileCount - 1].y;
+      solved = false;
+    }
+
+    function drawTiles() {
+      context.clearRect ( 0 , 0 , boardSize , boardSize );
+      for (var i = 0; i < tileCount; ++i) {
+        for (var j = 0; j < tileCount; ++j) {
+          var x = boardParts[i][j].x;
+          var y = boardParts[i][j].y;
+          if(i != emptyLoc.x || j != emptyLoc.y || solved == true) {
+            context.drawImage(image, x * tileSize, y * tileSize, tileSize, tileSize, i * tileSize, j * tileSize, tileSize, tileSize);
+          }
+        }
+      }
+    }
+
+    function slideTile(toLoc, fromLoc) {
+      if (!solved) {
+        // change toLoc <-> fromLoc
+        boardParts[toLoc.x][toLoc.y].x = boardParts[fromLoc.x][fromLoc.y].x;
+        boardParts[toLoc.x][toLoc.y].y = boardParts[fromLoc.x][fromLoc.y].y;
+        boardParts[fromLoc.x][fromLoc.y].x = tileCount - 1;
+        boardParts[fromLoc.x][fromLoc.y].y = tileCount - 1;
+        toLoc.x = fromLoc.x;
+        toLoc.y = fromLoc.y;
+        checkSolved();
+      }
+    }
+
+    function checkSolved() {
+      var flag = true;
+      for (var i = 0; i < tileCount; ++i) {
+        for (var j = 0; j < tileCount; ++j) {
+          if (boardParts[i][j].x != i || boardParts[i][j].y != j) {
+            flag = false;
+          }
+        }
+      }
+      solved = flag;
+    }
+
+    //image.onload = cutImageUp;
+    var loaded = false;
+    image.onload = async function () {
+      if (loaded) {
+        await sleep(3000);
+        setBoard();
+        drawTiles();
+        return;
+      }
+      context.drawImage(this, 0, 0, this.width, this.height, 0, 0, cv.width, cv.height);
+      loaded = true;
+      this.src = cv.toDataURL();
+      document.getElementById('rot1').src = this.src;
+      document.getElementById('rot2').src = this.src;
+    };
+    image.crossOrigin="anonymous";
+    //image.src = <? echo $_POST["src"] ?>;
+    swal("Normal mode", "You can clear it!", "info");
+    //image.src = 'https://upload.wikimedia.org/wikipedia/commons/3/31/European_shorthair_portrait_Garfield.jpg'
+    image.src = window.frameElement.imageSrc;
+
+  </script>
+</html>
